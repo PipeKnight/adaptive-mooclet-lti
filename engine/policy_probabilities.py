@@ -1,5 +1,5 @@
 from numpy.random import choice, beta
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Avg

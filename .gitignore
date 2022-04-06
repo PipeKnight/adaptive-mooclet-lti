@@ -26,3 +26,6 @@ secure.py
 secure.config
 
 
+
+.pytest_cache
+.ebextensions

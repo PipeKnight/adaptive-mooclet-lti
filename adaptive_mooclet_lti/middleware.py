@@ -12,7 +12,8 @@ load the iframe.
 import time
 from django.conf import settings
 from urlparse import urlparse
-#from hx_lti_initializer.utils import debug_printer
+
+# from hx_lti_initializer.utils import debug_printer
 from importlib import import_module
 from django.utils.cache import patch_vary_headers
 from django.utils.http import cookie_date
@@ -20,14 +21,14 @@ from django.utils.http import cookie_date
 
 class XFrameOptionsMiddleware(object):
     def process_response(self, request, response):
-        debug_printer('DEBUG - X-Frame-Options Middleware')
+        debug_printer("DEBUG - X-Frame-Options Middleware")
         debug_printer(settings.SERVER_NAME)
-        referrer = request.META.get('HTTP_REFERER')
+        referrer = request.META.get("HTTP_REFERER")
 
         # if this is localhost and non-https (i.e. development), we won't
         # receive the referer header so just make the response exempt from xframe controls
-        if settings.SERVER_NAME == 'localhost':
-            setattr(response, 'xframe_options_exempt', True)
+        if settings.SERVER_NAME == "localhost":
+            setattr(response, "xframe_options_exempt", True)
             return response
 
         # means the person accessed site directly and not via iframe so
@@ -37,15 +38,16 @@ class XFrameOptionsMiddleware(object):
 
         if settings.SERVER_NAME in referrer:
             try:
-                response['X-Frame-Options'] = "ALLOW-FROM " +\
-                    request.session['hx_lti_original_ref']
+                response["X-Frame-Options"] = (
+                    "ALLOW-FROM " + request.session["hx_lti_original_ref"]
+                )
                 return response
             except:
                 return response
         else:
             # parse the url it came from and default to not allow
             parsed_uri = urlparse(referrer)
-            domain = '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
+            domain = "{uri.scheme}://{uri.netloc}".format(uri=parsed_uri)
             x_frame_allow = False
 
             # if it does exist within the allowed list, then allow it to enter
@@ -58,31 +60,31 @@ class XFrameOptionsMiddleware(object):
 
             # explicitly set it to deny or allow from the site if found
             if x_frame_allow is False:
-                response['X-Frame-Options'] = "DENY"
+                response["X-Frame-Options"] = "DENY"
             else:
-                response['X-Frame-Options'] = "ALLOW-FROM " + x_frame_allow
+                response["X-Frame-Options"] = "ALLOW-FROM " + x_frame_allow
                 request.session["hx_lti_original_ref"] = x_frame_allow
 
-            debug_printer('DEBUG - URI: %s' % domain)
-            debug_printer('DEBUG - X-Frame: %s' % response['X-Frame-Options'])
+            debug_printer("DEBUG - URI: %s" % domain)
+            debug_printer("DEBUG - X-Frame: %s" % response["X-Frame-Options"])
 
             return response
 
 
 class SessionMiddleware(object):
-    '''
+    """
     session middleware that support multiple sessions based on url
-    '''
+    """
 
     def __init__(self):
         engine = import_module(settings.SESSION_ENGINE)
         self.SessionStore = engine.SessionStore
-        print "STarting engine"
+        print("STarting engine")
 
     def get_cookie_name(self, request):
-        '''
+        """
         get session cookie name based on url
-        '''
+        """
         return "sessionid_" + request.path.split("/")[1]
 
     def process_request(self, request):
@@ -97,22 +99,23 @@ class SessionMiddleware(object):
         """
         try:
             accessed = request.session.accessed
-            print str(accessed)
+            print(accessed)
             modified = request.session.modified
-            print str(modified)
+            print(modified)
             empty = request.session.is_empty()
-            print str(empty)
+            print(empty)
         except AttributeError:
             pass
         else:
             # First check if we need to delete this cookie.
             # The session should be deleted only if the session is entirely empty
             if self.get_cookie_name(request) in request.COOKIES and empty:
-                response.delete_cookie(self.get_cookie_name(request),
-                    domain=settings.SESSION_COOKIE_DOMAIN)
+                response.delete_cookie(
+                    self.get_cookie_name(request), domain=settings.SESSION_COOKIE_DOMAIN
+                )
             else:
                 if accessed:
-                    patch_vary_headers(response, ('Cookie',))
+                    patch_vary_headers(response, ("Cookie",))
                 if modified or settings.SESSION_SAVE_EVERY_REQUEST:
                     if request.session.get_expire_at_browser_close():
                         max_age = None
@@ -125,12 +128,16 @@ class SessionMiddleware(object):
                     # Skip session save for 500 responses, refs #3881.
                     if response.status_code != 500:
                         request.session.save()
-                        response.set_cookie(self.get_cookie_name(request),
-                                request.session.session_key, max_age=max_age,
-                                expires=expires, domain=settings.SESSION_COOKIE_DOMAIN,
-                                path=settings.SESSION_COOKIE_PATH,
-                                secure=settings.SESSION_COOKIE_SECURE or None,
-                                httponly=settings.SESSION_COOKIE_HTTPONLY or None)
+                        response.set_cookie(
+                            self.get_cookie_name(request),
+                            request.session.session_key,
+                            max_age=max_age,
+                            expires=expires,
+                            domain=settings.SESSION_COOKIE_DOMAIN,
+                            path=settings.SESSION_COOKIE_PATH,
+                            secure=settings.SESSION_COOKIE_SECURE or None,
+                            httponly=settings.SESSION_COOKIE_HTTPONLY or None,
+                        )
         return response
 
 
@@ -138,18 +145,28 @@ class CookielessSessionMiddleware(object):
     def __init__(self):
         engine = import_module(settings.SESSION_ENGINE)
         self.SessionStore = engine.SessionStore
-        print "Starting engine"
+        print("Starting engine")
 
     def process_request(self, request):
         # note: 'utm_source' is an objuscated term that in actuality contains
         # the session id injected into URL when the user does not allow cookies
-        session_key = request.COOKIES.get(settings.SESSION_COOKIE_NAME, request.GET.get('utm_source'))
+        session_key = request.COOKIES.get(
+            settings.SESSION_COOKIE_NAME, request.GET.get("utm_source")
+        )
         request.session = self.SessionStore(session_key)
         if not request.session.exists(request.session.session_key):
             request.session.create()
 
         try:
-            if (request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('HTTP_X_REAL_IP', request.META.get('REMOTE_ADDR', '1.2.3.4'))) != request.session['logged_ip']):
+            if (
+                request.META.get(
+                    "HTTP_X_FORWARDED_FOR",
+                    request.META.get(
+                        "HTTP_X_REAL_IP", request.META.get("REMOTE_ADDR", "1.2.3.4")
+                    ),
+                )
+                != request.session["logged_ip"]
+            ):
                 request.session.flush()
         except:
             pass

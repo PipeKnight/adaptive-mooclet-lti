@@ -5,22 +5,22 @@ from rest_framework import serializers
 class QuizSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Quiz
-        fields = ('id', 'name', 'url', 'context')
+        fields = ("id", "name", "url", "context")
 
 
 class QuestionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Question
-        fields = ('id', 'quiz', 'text', 'url')
+        fields = ("id", "quiz", "text", "url")
 
 
 class AnswerSerializer(serializers.HyperlinkedModelSerializer):
-	class Meta:
-		model = Answer
-		fields = ('id', 'question','text','correct')
+    class Meta:
+        model = Answer
+        fields = ("id", "question", "text", "correct")
 
 
 class Explanation(serializers.HyperlinkedModelSerializer):
-	class Meta:
-		model = Explanation
-		fields = ('id', 'answer','text')
+    class Meta:
+        model = Explanation
+        fields = ("id", "answer", "text")

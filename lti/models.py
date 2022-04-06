@@ -9,8 +9,8 @@ class LtiParameters(models.Model):
     Used to store outcome service url for a particular user and quiz
     Enables asynchronous or API-triggered grade passback
     '''
-    user = models.ForeignKey(User)
-    quiz = models.ForeignKey(Quiz)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    quiz = models.ForeignKey(Quiz, on_delete=models.DO_NOTHING)
 
     # LTI params - ADD THESE BELOW TOO
     lis_outcome_service_url = models.CharField(max_length=1024,default='')
