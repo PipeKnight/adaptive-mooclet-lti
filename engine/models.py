@@ -32,7 +32,7 @@ class Mooclet(models.Model):
     )
 
     def __unicode__(self):
-        return "Mooclet: {}".format(self.id)
+        return f"Mooclet: {self.id}"
 
     def get_version_ids(self):
         return self.version_set.values_list('id',flat=True)
@@ -40,17 +40,13 @@ class Mooclet(models.Model):
 
     def get_version(self, context={}):
         context['versions'] = self.version_set.all()
-        # context['version_ids'] = self.get_version_ids()
-        version = self.policy.run_policy(context)
         # version = self.version_set.get(pk=version_id)
-        return version
+        return self.policy.run_policy(context)
 
     def simulate_probabilities(self, context={}, iterations=100):
         context['versions'] = self.version_set.all()
-        # context['version_ids'] = self.get_version_ids()
-        probabilites = self.policy.run_simulation(context, iterations)
         # version = self.version_set.get(pk=version_id)
-        return probabilites
+        return self.policy.run_simulation(context, iterations)
 
 class Version(models.Model):
     '''
@@ -65,7 +61,7 @@ class Version(models.Model):
         try:
             return getattr(self, 'explanation').__unicode__()
         except:
-            return "Version: {}".format(self.pk)
+            return f"Version: {self.pk}"
 
 
 class Policy(models.Model):
@@ -103,23 +99,23 @@ class Policy(models.Model):
         # insert all version ids here?
         policy_function = self.get_policy_function()
         variables = self.get_variables()
-        version_id = policy_function(variables,context)
-        return version_id
+        return policy_function(variables,context)
 
     def run_simulation(self, context, iterations):
         policy_probability_function = self.get_policy_probability_function()
-        if policy_probability_function == None:
+        if policy_probability_function is None:
             return {'probabilities': 'n/a'}
         variables = self.get_variables()
         version_content_type = ContentType.objects.get_for_model(Version)
 
         #get versions 100 times and keep track of how often each is picked
         probabilities = policy_probability_function(variables, context, iterations=iterations)
-        
+
         explanation_probability, created = Variable.objects.get_or_create(name='explanation_probability', content_type=version_content_type)
         for version, probability in probabilities.iteritems():
-            explanation_probability_value = explanation_probability.get_data({'version': version}).last()
-            if explanation_probability_value:
+            if explanation_probability_value := explanation_probability.get_data(
+                {'version': version}
+            ).last():
                 explanation_probability_value.value = probability
                 explanation_probability_value.save()
             else:
@@ -150,22 +146,21 @@ class Variable(models.Model):
         return relevant value objects for the variable type
         '''
         # context is a dictionary that contains model objects user, course, quiz, mooclet, version
-        if context:
-            related_object = self.object_name # str: 'course','user','mooclet', or 'version'
-
-            query = {}
-            # if user variable and user info in context, filter by user
-            if 'user' in context and self.is_user_variable:
-                query['user'] = context['user']
-
-            # if context is at the mooclet-level but variable is version-related, pass related version ids to the query
-            if 'mooclet' in context and related_object=='version':
-                query['object_id__in'] = context['mooclet'].version_set.values_list('id',flat=True)
-            else:
-                query['object_id'] = context[related_object].id # pk of related content object instance
-            return self.value_set.filter(**query)
-        else:
+        if not context:
             return self.value_set.all()
+        related_object = self.object_name # str: 'course','user','mooclet', or 'version'
+
+        query = {}
+        # if user variable and user info in context, filter by user
+        if 'user' in context and self.is_user_variable:
+            query['user'] = context['user']
+
+        # if context is at the mooclet-level but variable is version-related, pass related version ids to the query
+        if 'mooclet' in context and related_object=='version':
+            query['object_id__in'] = context['mooclet'].version_set.values_list('id',flat=True)
+        else:
+            query['object_id'] = context[related_object].id # pk of related content object instance
+        return self.value_set.filter(**query)
 
     def get_data_dicts(self,context=None):
         '''
@@ -190,11 +185,11 @@ class Value(models.Model):
     timestamp = models.DateTimeField(null=True,auto_now=True)
 
     def __unicode__(self):
-        var_name = self.variable.name if self.variable.name else ""
-        value = self.value if self.value else ""
+        var_name = self.variable.name or ""
+        value = self.value or ""
         var_content_type = self.variable.content_type.name if self.variable.content_type else ""
-        value_object_id = self.object_id if self.object_id else ""
-        return "{}={}, {}={}".format(var_name, value, var_content_type, value_object_id) 
+        value_object_id = self.object_id or ""
+        return f"{var_name}={value}, {var_content_type}={value_object_id}" 
 
     def get_object_content(self,content_object_name):
         '''
@@ -285,11 +280,10 @@ class Quiz(models.Model):
         # explanation mooclets
         explanations = [answer.mooclet_explanation for answer in self.answer_set.all()]
         next_question = self.mooclet_next_question
-        mooclets = {
+        return {
             'explanations': explanations,
             'next_question': next_question,
         }
-        return mooclets
 
 
 class Question(Version):

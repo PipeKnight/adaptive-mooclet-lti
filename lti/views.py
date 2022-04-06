@@ -28,7 +28,7 @@ def tool_config(request):
     Generates an XML config that can be used to add this tool to the Canvas LMS
     '''
     TOOL_NAME = 'Adaptive Quiz LTI'
-    host = 'https://' + request.get_host()
+    host = f'https://{request.get_host()}'
 
     lti_tool_config = ToolConfig(
         title=TOOL_NAME,
@@ -58,7 +58,7 @@ def tool_config(request):
     lti_tool_config.set_ext_param('canvas.instructure.com', 'privacy_level', 'public')
     lti_tool_config.set_ext_param('canvas.instructure.com', 'domain', request.get_host().partition(':')[0])
     lti_tool_config.description = 'The Qualtrics LTI Bridge allows instructors to embed qualtrics quizzes in an LMS as an LTI tool.'
-    
+
     return HttpResponse(lti_tool_config.to_xml(), content_type='text/xml', status=200)
 
 
@@ -101,18 +101,13 @@ def launch(request,quiz_id):
         #return redirect('engine:quiz_detail', quiz_id=quiz_id)
         #generic instructor_launch function
         url = reverse('engine:launch_quiz_manager', kwargs={'quiz_id':quiz_id})
-        url += '?utm_source=%s' % request.session.session_key
-        response = HttpResponseRedirect(url)
-        #response['Location'] += '?utm_source=%s' % request.session.session_key
-        return response
-
     else:
         # student role; launch the quiz
         url = reverse('engine:launch_quiz', kwargs={'quiz_id':quiz_id})
-        url += '?utm_source=%s' % request.session.session_key
-        response = HttpResponseRedirect(url)
+
+    url += f'?utm_source={request.session.session_key}'
         #response['Location'] += '?utm_source=%s' % request.session.session_key
-        return response
+    return HttpResponseRedirect(url)
         #return redirect('engine:launch_quiz', quiz_id=quiz.id)
 
 

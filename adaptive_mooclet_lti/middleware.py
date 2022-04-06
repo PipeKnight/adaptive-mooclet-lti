@@ -60,11 +60,11 @@ class XFrameOptionsMiddleware(object):
             if x_frame_allow is False:
                 response['X-Frame-Options'] = "DENY"
             else:
-                response['X-Frame-Options'] = "ALLOW-FROM " + x_frame_allow
+                response['X-Frame-Options'] = f"ALLOW-FROM {x_frame_allow}"
                 request.session["hx_lti_original_ref"] = x_frame_allow
 
-            debug_printer('DEBUG - URI: %s' % domain)
-            debug_printer('DEBUG - X-Frame: %s' % response['X-Frame-Options'])
+            debug_printer(f'DEBUG - URI: {domain}')
+            debug_printer(f"DEBUG - X-Frame: {response['X-Frame-Options']}")
 
             return response
 

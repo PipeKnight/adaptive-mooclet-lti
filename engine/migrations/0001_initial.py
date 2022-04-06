@@ -7,6 +7,8 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
+
+
 class Migration(migrations.Migration):
 
     initial = True
@@ -20,21 +22,48 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Answer',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('text', models.TextField(default='', verbose_name='answer text')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
+                (
+                    'text',
+                    models.TextField(default='', verbose_name='answer text'),
+                ),
                 ('correct', models.BooleanField()),
             ],
         ),
         migrations.CreateModel(
             name='Collaborator',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Course',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('context', models.CharField(default='', max_length=100)),
                 ('instance', models.CharField(default='', max_length=200)),
                 ('name', models.CharField(default='', max_length=200)),
@@ -43,23 +72,54 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Mooclet',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(default='', max_length=100)),
             ],
         ),
         migrations.CreateModel(
             name='MoocletType',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(max_length=100, unique=True)),
                 ('display_name', models.CharField(max_length=200)),
-                ('content_type', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),
+                (
+                    'content_type',
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='contenttypes.ContentType',
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Policy',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(max_length=100)),
             ],
             options={
@@ -69,12 +129,45 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Quiz',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name='quiz name')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
+                (
+                    'name',
+                    models.CharField(max_length=100, verbose_name='quiz name'),
+                ),
                 ('url', models.URLField(blank=True, default='')),
-                ('course', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='engine.Course')),
-                ('mooclet_next_question', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='engine.Mooclet')),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    'course',
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='engine.Course',
+                    ),
+                ),
+                (
+                    'mooclet_next_question',
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='engine.Mooclet',
+                    ),
+                ),
+                (
+                    'user',
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
                 'verbose_name_plural': 'quizzes',
@@ -83,43 +176,112 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Response',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('grade', models.FloatField()),
                 ('timestamp', models.DateTimeField(auto_now=True, null=True)),
-                ('answer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='engine.Answer')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    'answer',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='engine.Answer',
+                    ),
+                ),
+                (
+                    'user',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Value',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('object_id', models.PositiveIntegerField(null=True)),
                 ('value', models.FloatField()),
                 ('timestamp', models.DateTimeField(auto_now=True, null=True)),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    'user',
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Variable',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(max_length=100)),
                 ('is_user_variable', models.BooleanField(default=False)),
                 ('description', models.TextField(default='')),
-                ('content_type', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),
+                (
+                    'content_type',
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='contenttypes.ContentType',
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Version',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Explanation',
             fields=[
-                ('version_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='engine.Version')),
+                (
+                    'version_ptr',
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to='engine.Version',
+                    ),
+                ),
                 ('text', models.TextField(verbose_name='explanation text')),
             ],
             bases=('engine.version',),
@@ -127,8 +289,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Question',
             fields=[
-                ('version_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='engine.Version')),
-                ('name', models.CharField(max_length=100, verbose_name='question name')),
+                (
+                    'version_ptr',
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to='engine.Version',
+                    ),
+                ),
+                (
+                    'name',
+                    models.CharField(
+                        max_length=100, verbose_name='question name'
+                    ),
+                ),
                 ('text', models.TextField(verbose_name='question text')),
                 ('url', models.URLField(blank=True, default='')),
                 ('quiz', models.ManyToManyField(to='engine.Quiz')),
@@ -138,12 +315,18 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='version',
             name='mooclet',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='engine.Mooclet'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='engine.Mooclet',
+            ),
         ),
         migrations.AddField(
             model_name='value',
             name='variable',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='engine.Variable'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='engine.Variable',
+            ),
         ),
         migrations.AddField(
             model_name='policy',
@@ -153,40 +336,60 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mooclet',
             name='policy',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='engine.Policy'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='engine.Policy',
+            ),
         ),
         migrations.AddField(
             model_name='mooclet',
             name='type',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='engine.MoocletType'),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='engine.MoocletType',
+            ),
         ),
         migrations.AddField(
             model_name='collaborator',
             name='course',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='engine.Course'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='engine.Course'
+            ),
         ),
         migrations.AddField(
             model_name='collaborator',
             name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
             model_name='answer',
             name='mooclet_explanation',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='engine.Mooclet'),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='engine.Mooclet',
+            ),
         ),
         migrations.AlterOrderWithRespectTo(
             name='version',
             order_with_respect_to='mooclet',
         ),
         migrations.AlterUniqueTogether(
-            name='collaborator',
-            unique_together=set([('user', 'course')]),
+            name='collaborator', unique_together={('user', 'course')}
         ),
         migrations.AddField(
             model_name='answer',
             name='question',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='engine.Question'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='engine.Question',
+            ),
         ),
         migrations.AlterOrderWithRespectTo(
             name='answer',

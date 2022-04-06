@@ -49,13 +49,9 @@ def get_question(request):
 
     num_answers = len(answers)
 
-    # identifies the correct answer choice
-    # if there's more than one labelled correct only the first is identified
-    correct_choice = 0
-    for i in range(num_answers):
-        if answers[i].correct:
-            correct_choice = i+1
-            break
+    correct_choice = next(
+        (i + 1 for i in range(num_answers) if answers[i].correct), 0
+    )
 
     output = {
         'text':question.text,
@@ -64,8 +60,8 @@ def get_question(request):
 
     # add answer text to output, e.g. answer1_text: "answer text"
     for i in range(num_answers):
-        output['answer{}_text'.format(i+1)] = answers[i].text
-    
+        output[f'answer{i + 1}_text'] = answers[i].text
+
     return JsonResponse(output, json_dumps_params={'sort_keys':True})
 
 
@@ -172,7 +168,12 @@ def submit_quiz_grade(request):
     required_get_params = ['user_id', 'quiz_id', 'grade']
     for param in required_get_params:
         if param not in request.GET:
-            return JsonResponse({'message':'Required parameter {} not found in GET params'.format(param)})
+            return JsonResponse(
+                {
+                    'message': f'Required parameter {param} not found in GET params'
+                }
+            )
+
     if 'quizsource' in request.GET and request.GET['quizsource'] == 'preview':
         #instructor preview, don't save the values
         return JsonResponse({'message':'Instructor preview, values not saved'})
@@ -218,7 +219,7 @@ def submit_value(request):
     user = User.objects.get(pk=user_id)
     content_type = None
     object_id = None
-    
+
     if 'content_type' in request.GET:
         content_type = ContentType.objects.get( model=request.GET['content_type'])
     #we may want to not allow object_id without a content_type   
@@ -244,11 +245,9 @@ def submit_value(request):
                 count_saved_params = count_saved_params + 1
             except ValueError:
                 count_unsaved_params = count_unsaved_params + 1
-                pass
-            
-    message = '{} User variables successfully submitted'.format(str(count_saved_params))
+    message = f'{str(count_saved_params)} User variables successfully submitted'
     if count_unsaved_params > 0:
-        message = '{} variables could not be saved'.format(str(count_unsaved_params))
+        message = f'{str(count_unsaved_params)} variables could not be saved'
     return JsonResponse({'message': message})
 
 
@@ -273,7 +272,7 @@ def update_intermediates(request):
 
     if 'question_id' not in request.GET:
         return JsonResponse({'message':'Required parameter question_id not found in GET parameters'})
-    
+
     #update version level intermediate variables
     version = Version.objects.get(pk=int(request.GET['version_id']))
     mooclet = version.mooclet
@@ -285,8 +284,13 @@ def update_intermediates(request):
     if rating_average is None:
         rating_average = 0
     std_dev = 0
-    ratings = [v.value for v in Variable.objects.filter(name='student_rating').first().get_data({'version':version }).all()]
-    if len(ratings) >= 1:
+    if ratings := [
+        v.value
+        for v in Variable.objects.filter(name='student_rating')
+        .first()
+        .get_data({'version': version})
+        .all()
+    ]:
         std_dev = std(ratings)
     num_students_db, created = Variable.objects.get_or_create(name='num_students', display_name="Number of Students", content_type=version_content_type)
     mean_rating_db, created = Variable.objects.get_or_create(name='mean_student_rating', display_name="Mean Student Rating", content_type=version_content_type)
@@ -299,19 +303,19 @@ def update_intermediates(request):
     if current_num_students:
         current_num_students.value = float(rating_count)
         current_num_students.save()
-    elif not current_num_students and rating_count:
+    elif rating_count:
         current_num_students = Value.objects.create(variable=num_students_db, object_id=version.pk, value=rating_count)
 
     if current_mean:
         current_mean.value = rating_average
         current_mean.save()
-    elif not current_mean and rating_average:
+    elif rating_average:
         current_mean = Value.objects.create(variable=mean_rating_db, object_id=version.pk, value=rating_average)
 
     if current_std_dev:
         current_std_dev.value = std_dev
         current_std_dev.save()
-    elif not current_std_dev and std_dev:
+    elif std_dev:
         current_std_dev = Value.objects.create(variable=std_dev_db, object_id=version.pk, value=std_dev)
 
     #simulate probabilities
@@ -347,13 +351,9 @@ def update_intermediates(request):
     answer_counts = {answer: answer_count.get_data({'question': question, 'answer': answer }).last() for answer in answers}
     total_count = sum(filter(None, answer_counts.values()))
     answer_proportion, created = Variable.objects.get_or_create(name='answer_proportion', content_type=answer_content_type)
-    for answer in answer_counts:
+    for answer, value_ in answer_counts.items():
         #generate the proportion of answers
-        if answer_counts[answer]:
-            proportion = answer_counts[answer]/total_count
-        else: #no answer_choice_count, no one has chosen this answer
-            proportion = 0.0
-
+        proportion = answer_counts[answer]/total_count if value_ else 0.0
         value = answer_proportion.get_data({'question': question, 'answer': answer }).last()
         if not value:
             value = Value.objects.create(variable=answer_proportion, object_id=answer.pk, value=proportion)
