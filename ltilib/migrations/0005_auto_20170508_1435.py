@@ -8,48 +8,48 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lti', '0004_auto_20160908_1910'),
+        ("ltilib", "0004_auto_20160908_1910"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ltiparameters',
-            name='context_id',
-            field=models.CharField(default='', max_length=1024),
+            model_name="ltiparameters",
+            name="context_id",
+            field=models.CharField(default="", max_length=1024),
         ),
         migrations.AlterField(
-            model_name='ltiparameters',
-            name='custom_canvas_course_id',
-            field=models.CharField(default='', max_length=1024),
+            model_name="ltiparameters",
+            name="custom_canvas_course_id",
+            field=models.CharField(default="", max_length=1024),
         ),
         migrations.AlterField(
-            model_name='ltiparameters',
-            name='custom_canvas_user_id',
-            field=models.CharField(default='', max_length=1024),
+            model_name="ltiparameters",
+            name="custom_canvas_user_id",
+            field=models.CharField(default="", max_length=1024),
         ),
         migrations.AlterField(
-            model_name='ltiparameters',
-            name='lis_outcome_service_url',
-            field=models.CharField(default='', max_length=1024),
+            model_name="ltiparameters",
+            name="lis_outcome_service_url",
+            field=models.CharField(default="", max_length=1024),
         ),
         migrations.AlterField(
-            model_name='ltiparameters',
-            name='lis_person_sourcedid',
-            field=models.CharField(default='', max_length=1024),
+            model_name="ltiparameters",
+            name="lis_person_sourcedid",
+            field=models.CharField(default="", max_length=1024),
         ),
         migrations.AlterField(
-            model_name='ltiparameters',
-            name='lis_result_sourcedid',
-            field=models.CharField(default='', max_length=1024),
+            model_name="ltiparameters",
+            name="lis_result_sourcedid",
+            field=models.CharField(default="", max_length=1024),
         ),
         migrations.AlterField(
-            model_name='ltiparameters',
-            name='oauth_consumer_key',
-            field=models.CharField(default='', max_length=1024),
+            model_name="ltiparameters",
+            name="oauth_consumer_key",
+            field=models.CharField(default="", max_length=1024),
         ),
         migrations.AlterField(
-            model_name='ltiparameters',
-            name='roles',
-            field=models.CharField(default='', max_length=1024),
+            model_name="ltiparameters",
+            name="roles",
+            field=models.CharField(default="", max_length=1024),
         ),
     ]

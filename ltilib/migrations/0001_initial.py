@@ -13,31 +13,53 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('engine', '0001_initial'),
+        ("engine", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='LtiParameters',
+            name="LtiParameters",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('lis_outcome_service_url', models.CharField(default='', max_length=200)),
-                ('lis_result_sourcedid', models.CharField(default='', max_length=100)),
-                ('oauth_consumer_key', models.CharField(default='', max_length=100)),
-                ('lti_user_id', models.CharField(default='', max_length=100)),
-                ('canvas_user_id', models.CharField(default='', max_length=50)),
-                ('canvas_course_id', models.CharField(default='', max_length=50)),
-                ('data', models.TextField(default='')),
-                ('quiz', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='engine.Quiz')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "lis_outcome_service_url",
+                    models.CharField(default="", max_length=200),
+                ),
+                ("lis_result_sourcedid", models.CharField(default="", max_length=100)),
+                ("oauth_consumer_key", models.CharField(default="", max_length=100)),
+                ("lti_user_id", models.CharField(default="", max_length=100)),
+                ("canvas_user_id", models.CharField(default="", max_length=50)),
+                ("canvas_course_id", models.CharField(default="", max_length=50)),
+                ("data", models.TextField(default="")),
+                (
+                    "quiz",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="engine.Quiz"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'LTI Parameters',
-                'verbose_name_plural': 'LTI Parameters',
+                "verbose_name": "LTI Parameters",
+                "verbose_name_plural": "LTI Parameters",
             },
         ),
         migrations.AlterUniqueTogether(
-            name='ltiparameters',
-            unique_together=set([('user', 'quiz')]),
+            name="ltiparameters",
+            unique_together=set([("user", "quiz")]),
         ),
     ]

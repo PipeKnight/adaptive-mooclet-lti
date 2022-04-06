@@ -8,28 +8,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lti', '0003_auto_20160908_1732'),
+        ("ltilib", "0003_auto_20160908_1732"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ltiparameters',
-            name='context_id',
-            field=models.CharField(default='', max_length=200),
+            model_name="ltiparameters",
+            name="context_id",
+            field=models.CharField(default="", max_length=200),
         ),
         migrations.AddField(
-            model_name='ltiparameters',
-            name='roles',
-            field=models.CharField(default='', max_length=200),
+            model_name="ltiparameters",
+            name="roles",
+            field=models.CharField(default="", max_length=200),
         ),
         migrations.AlterField(
-            model_name='ltiparameters',
-            name='custom_canvas_course_id',
-            field=models.CharField(default='', max_length=100),
+            model_name="ltiparameters",
+            name="custom_canvas_course_id",
+            field=models.CharField(default="", max_length=100),
         ),
         migrations.AlterField(
-            model_name='ltiparameters',
-            name='custom_canvas_user_id',
-            field=models.CharField(default='', max_length=100),
+            model_name="ltiparameters",
+            name="custom_canvas_user_id",
+            field=models.CharField(default="", max_length=100),
         ),
     ]

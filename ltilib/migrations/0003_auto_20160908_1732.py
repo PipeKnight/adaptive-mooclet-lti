@@ -8,18 +8,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lti', '0002_ltiparameters_lis_person_sourcedid'),
+        ("ltilib", "0002_ltiparameters_lis_person_sourcedid"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='ltiparameters',
-            old_name='canvas_course_id',
-            new_name='custom_canvas_course_id',
+            model_name="ltiparameters",
+            old_name="canvas_course_id",
+            new_name="custom_canvas_course_id",
         ),
         migrations.RenameField(
-            model_name='ltiparameters',
-            old_name='canvas_user_id',
-            new_name='custom_canvas_user_id',
+            model_name="ltiparameters",
+            old_name="canvas_user_id",
+            new_name="custom_canvas_user_id",
         ),
     ]
