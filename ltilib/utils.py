@@ -1,7 +1,7 @@
 from dce_lti_py import OutcomeRequest
 from django.conf import settings
 from engine.models import Quiz
-from lti.models import LtiParameters
+from ltilib.models import LtiParameters
 
 
 def display_preview(user, quiz):

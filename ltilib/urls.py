@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from . import views
 
-app_name = "lti"
+app_name = "ltilib"
 
 urlpatterns = [
     url(r"^tool_config$", views.tool_config, name="tool_config"),

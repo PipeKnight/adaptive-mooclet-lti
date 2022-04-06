@@ -7,7 +7,7 @@ from engine import utils
 
 from rest_framework import viewsets
 from api.serializers import *
-from lti.utils import grade_passback
+from ltilib.utils import grade_passback
 
 from django.db.models import Avg
 

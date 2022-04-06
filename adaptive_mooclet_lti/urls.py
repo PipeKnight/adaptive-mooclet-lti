@@ -6,7 +6,7 @@ urlpatterns = [
     url(r"^$", views.home, name="home"),
     url(r"^auth_error/", views.lti_auth_error, name="lti_auth_error"),
     url(r"^admin/", admin.site.urls),
-    url(r"^lti/", include("lti.urls", namespace="lti")),
+    url(r"^lti/", include("ltilib.urls", namespace="lti")),
     url(r"^quiz/", include("quiz.urls", namespace="quiz")),
     url(r"^qualtrics/", include("qualtrics.urls", namespace="qualtrics")),
     url(r"^engine/", include("engine.urls.urls", namespace="engine")),

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from engine.models import *
 from .forms import ChooseAnswerForm, RateExplanationForm
-from lti.utils import grade_passback
+from ltilib.utils import grade_passback
 
 # Create your views here.
 

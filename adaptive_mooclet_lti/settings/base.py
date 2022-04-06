@@ -59,7 +59,7 @@ INSTALLED_APPS = (
     "django_bootstrap_breadcrumbs",
     # 'crispy_forms',
     ## core functions
-    "lti",
+    "ltilib",
     "engine",
     "quiz",
     "qualtrics",

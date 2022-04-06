@@ -7,7 +7,7 @@ from ims_lti_py.tool_config import ToolConfig
 from django.http import HttpResponse, HttpResponseRedirect
 import logging
 from engine.models import Quiz
-from lti.models import LtiParameters
+from ltilib.models import LtiParameters
 from .utils import display_preview
 import json
 

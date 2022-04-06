@@ -11,7 +11,7 @@ from django.db.models import Avg, StdDev
 from .forms import *
 from .utils import *
 from qualtrics.utils import provision_qualtrics_quiz
-from lti.utils import display_preview
+from ltilib.utils import display_preview
 from numpy import std
 import csv
 
