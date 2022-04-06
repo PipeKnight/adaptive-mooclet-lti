@@ -36,11 +36,7 @@ def question(request, question_id):
         if choose_answer_form.is_valid():
             answer = choose_answer_form.cleaned_data['answer']
 
-            if answer.correct:
-                grade = 1
-            else:
-                grade = 0
-
+            grade = 1 if answer.correct else 0
             # Save selected answer and grade to database
             response = Response(
                 user=request.user,
@@ -86,24 +82,23 @@ def answer(request, answer_id):
         if 'Instructor' in user_roles or 'ContentDeveloper' in user_roles:
             return redirect('quiz:question', question_id=answer.question.id)
 
-        else:
-            # process student rating for explanation
-            rate_explanation_form = RateExplanationForm(request.POST)
+        # process student rating for explanation
+        rate_explanation_form = RateExplanationForm(request.POST)
 
-            rating = rate_explanation_form.save(commit=False)
-            rating.variable_id = Variable.objects.get(name='version_rating').id
-            rating.user = request.user
-            rating.save()
+        rating = rate_explanation_form.save(commit=False)
+        rating.variable_id = Variable.objects.get(name='version_rating').id
+        rating.user = request.user
+        rating.save()
 
-            # get response
-            Response.objects.filter(user=request.user,answer=answer).last()
+        # get response
+        Response.objects.filter(user=request.user,answer=answer).last()
 
-            # grade passback to LMS
-            #TODO need to define quiz first, this won't work
-            quiz = None
-            grade_passback(score, request.user, quiz)
+        # grade passback to LMS
+        #TODO need to define quiz first, this won't work
+        quiz = None
+        grade_passback(score, request.user, quiz)
 
-            return redirect('lti:return_to_LMS')
+        return redirect('lti:return_to_LMS')
 
         # else:
         #     return redirect('quiz:answer',answer_id=answer.id)

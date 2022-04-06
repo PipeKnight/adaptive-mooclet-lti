@@ -13,20 +13,18 @@ class QSF:
     def __init__(self, template=None, url=None):
         if template and url:
             raise Exception('Too many arguments')
-        # Option 1: Initialize QSF from a given URL
         elif url:
             try:
                 self.content = requests.get(url).json()
             except:
                 raise Exception('Error retrieving QSF from URL')
 
-        # Option 2: Initialize QSF from one of our templates
         else:
             # get the template path
             if template:
                 # assumes it is in static/qualtrics
-                template_path = path.join(settings.QSF_ROOT+'/'+template.filename)
-            
+                template_path = path.join(f'{settings.QSF_ROOT}/{template.filename}')
+
             else:
                 # default to the first template
                 template = Template.objects.get(pk=1)
@@ -80,14 +78,15 @@ class QSF:
             'URL': qsf_url,
         }
         response = requests.post(settings.QUALTRICS_API_URL, params=params)
-        
-        if not response.status_code == 200:
-            raise Exception('Something went wrong with qualtrics survey creation: {}'.format(response.text))
-        
+
+        if response.status_code != 200:
+            raise Exception(
+                f'Something went wrong with qualtrics survey creation: {response.text}'
+            )
+
+
         survey_id = response.json()['Result']['SurveyID']
-        qualtrics_url = "{}/SE/?SID={}".format(settings.QUALTRICS_BASE_URL, survey_id)
-        
-        return qualtrics_url
+        return f"{settings.QUALTRICS_BASE_URL}/SE/?SID={survey_id}"
 
 
     def upload_to_qualtrics_v3(self, survey_name, method='url', qsf_url=None):
@@ -98,7 +97,7 @@ class QSF:
             method='file': directly upload the file content (to be implemented once the API works)
         '''
 
-        # upload using url 
+        # upload using url
         if method == 'url':
             api_url = "https://harvard.az1.qualtrics.com/API/v3/surveys"            
 
@@ -113,18 +112,16 @@ class QSF:
 
             response = requests.post(api_url, headers=headers, files=data)
 
-            if not response.status_code == 200:
-                raise Exception('Something went wrong with qualtrics survey creation: {}'.format(response.text))
+            if response.status_code != 200:
+                raise Exception(
+                    f'Something went wrong with qualtrics survey creation: {response.text}'
+                )
+
 
             survey_id = response.json()['result']['id']
-            
 
-        if method == 'file':
-            pass
-        
-        qualtrics_url = "{}/SE/?SID={}".format(settings.QUALTRICS_BASE_URL, survey_id)
 
-        return qualtrics_url
+        return f"{settings.QUALTRICS_BASE_URL}/SE/?SID={survey_id}"
 
 
 def get_modified_qsf(question, template=None):
@@ -147,7 +144,7 @@ def provision_qualtrics_quiz(request, question):
 
     #quiz = question.quiz
     # name of the survey that will created on Qualtrics after QSF upload
-    survey_name = 'adaptive-quiz question_{} june2 {}'.format(question.id, question.text)
+    survey_name = f'adaptive-quiz question_{question.id} june2 {question.text}'
 
     # this is the url that the modified QSF will be hosted at
     qsf_url = request.build_absolute_uri(reverse('qualtrics:qsf_for_question',kwargs={'question_id':question.id}))
@@ -155,8 +152,7 @@ def provision_qualtrics_quiz(request, question):
     template = Template.objects.get(pk=1)
     qsf = QSF(template)
     qsf.insert_question_id(question.id)
-    survey_url = qsf.upload_to_qualtrics(survey_name, method='url', qsf_url=qsf_url)
-    return survey_url
+    return qsf.upload_to_qualtrics(survey_name, method='url', qsf_url=qsf_url)
 
 
 # def upload_qsf_to_qualtrics(qsf_url, survey_name):

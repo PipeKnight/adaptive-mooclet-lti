@@ -34,7 +34,7 @@ def quiz_create_blank(request):
 
     quiz = Quiz(
         #user=request.user,
-        
+
     )
     if course:
         quiz.course = course
@@ -44,11 +44,10 @@ def quiz_create_blank(request):
 
     if request.session.get('LTI_LAUNCH'):
         return redirect('lti:return_launch_url', quiz_id=quiz.id)
-    else:
-        context = {
-            'launch_url': request.build_absolute_uri(reverse('lti:launch',kwargs={'quiz_id':quiz.id})),
-        }
-        return render(request, 'engine/show_launch_url.html', context)
+    context = {
+        'launch_url': request.build_absolute_uri(reverse('lti:launch',kwargs={'quiz_id':quiz.id})),
+    }
+    return render(request, 'engine/show_launch_url.html', context)
 
 def quiz_create_url(request):
     if request.method == 'GET':
@@ -73,11 +72,10 @@ def quiz_create_url(request):
 
         if request.session.get('LTI_LAUNCH'):
             return redirect('lti:return_launch_url', quiz_id=quiz.id)
-        else:
-            context = {
-                'launch_url': request.build_absolute_uri(reverse('lti:launch',kwargs={'quiz_id':quiz.id})),
-            }
-            return render(request, 'engine/show_launch_url.html', context)
+        context = {
+            'launch_url': request.build_absolute_uri(reverse('lti:launch',kwargs={'quiz_id':quiz.id})),
+        }
+        return render(request, 'engine/show_launch_url.html', context)
 
 
 #### UTILITY VIEWS ####
@@ -88,17 +86,7 @@ def launch_quiz(request, quiz_id):
     Checks if external URLs are present in quiz model fields
     '''
     quiz = get_object_or_404(Quiz,pk=quiz_id)
-    #handle redicrets to different instructor/student views here?
-    # redirect to an alternate view if the quiz is complete
-    # grade_data = Variable.objects.get(name='quiz_grade').get_data({'quiz':quiz,'user':request.user})
-    # if grade_data:
-    #     grade = grade_data.last().value
-    #     if grade == 1:
-    #         return redirect('quiz:complete')
-
-    # check for external url on quiz or first question of quiz
-    external_url = quiz.getExternalUrl()
-    if external_url:
+    if external_url := quiz.getExternalUrl():
         extra_params = {
             # pass in django user_id as a GET parameter to survey
             'quiz_id':quiz_id,
@@ -108,7 +96,6 @@ def launch_quiz(request, quiz_id):
         params_append_char = '&' if '?' in external_url else '?'
         return redirect(external_url+ params_append_char + urlencode(extra_params))
 
-    # otherwise use django quiz app
     else:
         if quiz.question_set.all().exists():
             question = quiz.question_set.first()
@@ -134,12 +121,11 @@ def launch_quiz_manager(request, quiz_id):
     if the quiz has an associated questionelse quiz_detail
     """
     quiz = get_object_or_404(Quiz, pk=quiz_id)
-    if quiz.question_set.exists():
-        #show question view
-        question = quiz.question_set.first()
-        return redirect('engine:question_detail', quiz_id=quiz.pk, question_id=question.pk)
-    else:
+    if not quiz.question_set.exists():
         return redirect('engine:quiz_detail', quiz_id=quiz.pk)
+    #show question view
+    question = quiz.question_set.first()
+    return redirect('engine:question_detail', quiz_id=quiz.pk, question_id=question.pk)
 
 def collaborator_request(request):
     # potential researcher would have to authenticate in the course, then open this view in a new browser window/tab (outside lms)
@@ -233,8 +219,9 @@ def question_results(request, quiz_id, question_id):
     for answer in answers:
         answer_values = []
         for variable in variables:
-            value = variable.get_data({'quiz':quiz, 'question':question, 'answer': answer}).last()
-            if value:
+            if value := variable.get_data(
+                {'quiz': quiz, 'question': question, 'answer': answer}
+            ).last():
                 answer_values.append(value.value)
             else:
                 answer_values.append('n/a')
@@ -456,9 +443,6 @@ def answer_modify(request, quiz_id, question_id, answer_id):
         }
         return render(request, 'engine/answer_modify.html', context)
 
-    elif request.method == 'POST':
-        pass
-
 
 def mooclet_detail(request, **kwargs):
     '''
@@ -473,7 +457,7 @@ def mooclet_detail(request, **kwargs):
     # object class that the mooclet is attached to
     parent_content_type = mooclet.type.parent_content_type
     parent_content = ContentType.get_object_for_this_type(parent_content_type, pk=kwargs[parent_content_type.name+'_id'])
-    
+
     # populate a mooclet context dict
     mooclet_context = {}
     if parent_content_type.name == 'question':
@@ -491,14 +475,11 @@ def mooclet_detail(request, **kwargs):
     if request.method == 'GET':
 
         context = {
-            'quiz':quiz,
-            'mooclet':mooclet,
-            'versions':versions,
-            'mooclet_policy_form':mooclet_policy_form,
-        }
-
-        # pass additional context variables for navigation
-        context.update(mooclet_context)
+            'quiz': quiz,
+            'mooclet': mooclet,
+            'versions': versions,
+            'mooclet_policy_form': mooclet_policy_form,
+        } | mooclet_context
 
         if 'question' in kwargs:
             context['question'] = get_object_or_404(Question,pk=kwargs['question_id'])
@@ -512,7 +493,10 @@ def mooclet_detail(request, **kwargs):
         mooclet_policy_form = MoocletPolicyForm(request.POST, instance=mooclet)
         mooclet = mooclet_policy_form.save()
         # converts dict of objs to dict of pks
-        mooclet_context_pk = {name+'_id':obj.pk for name,obj in mooclet_context.items()}
+        mooclet_context_pk = {
+            f'{name}_id': obj.pk for name, obj in mooclet_context.items()
+        }
+
         return redirect('engine:mooclet_detail', quiz_id=quiz.pk, mooclet_id=mooclet.pk, **mooclet_context_pk)     
 
 
@@ -648,7 +632,7 @@ def mooclet_simulate_probabilities(request, **kwargs):
 
     #get versions 100 times and keep track of how often each is picked
     num_iterations = 100
-    for i in range(1, num_iterations):
+    for _ in range(1, num_iterations):
         version = mooclet.get_version(mooclet_context)
         #version = unicode(version)
         version_counts[version] = version_counts[version] + 1
@@ -657,8 +641,9 @@ def mooclet_simulate_probabilities(request, **kwargs):
     probabilities = [float(version_counts[version]) / sum(version_counts.values()) for version in versions]
     explanation_probability, created = Variable.objects.get_or_create(name='explanation_probability', content_type=version_content_type)
     for version, probability in zip(versions, probabilities):
-        explanation_probability_value = explanation_probability.get_data({'version': version}).last()
-        if explanation_probability_value:
+        if explanation_probability_value := explanation_probability.get_data(
+            {'version': version}
+        ).last():
             explanation_probability_value.value = probability
             explanation_probability_value.save()
         else:
@@ -685,8 +670,18 @@ def mooclet_list_values(request, **kwargs):
     values = []
     # for variable in mooclet.policy.variables.all():
     for variable in Variable.objects.all():
-        for value in variable.get_data({'quiz':quiz, 'question':question, 'answer':answer, 'mooclet':mooclet}):
-            values.append(value)
+        values.extend(
+            iter(
+                variable.get_data(
+                    {
+                        'quiz': quiz,
+                        'question': question,
+                        'answer': answer,
+                        'mooclet': mooclet,
+                    }
+                )
+            )
+        )
 
     context = {
         'quiz':quiz,
@@ -706,8 +701,12 @@ def mooclet_results(request, **kwargs):
     version_content_type = ContentType.objects.get_for_model(Version)
 
     # determine appropriate variables
-    variables = []
-    variables.append(Variable.objects.get_or_create(name='explanation_probability', content_type=version_content_type)[0])
+    variables = [
+        Variable.objects.get_or_create(
+            name='explanation_probability', content_type=version_content_type
+        )[0]
+    ]
+
     variables.append(Variable.objects.get_or_create(name='mean_student_rating', display_name="Mean Student Rating", content_type=version_content_type)[0])
     variables.append(Variable.objects.get_or_create(name='num_students', display_name="Number of Students", content_type=version_content_type)[0])
     variables.append(Variable.objects.get_or_create(name='rating_std_dev', display_name="Standard Deviation of Rating", content_type=version_content_type)[0])
@@ -720,31 +719,32 @@ def mooclet_results(request, **kwargs):
         for variable in variables:
             new_value = None
             #value = variable.get_data({'quiz':quiz, 'version':version }).last()
-            
+
             if variable.name == 'mean_student_rating':
                 new_value = Variable.objects.filter(name='student_rating').first().get_data({'quiz':quiz, 'version':version }).all().aggregate(Avg('value'))
                 new_value = new_value['value__avg']
             elif variable.name == 'num_students':
                 new_value = Variable.objects.filter(name='student_rating').first().get_data({'quiz':quiz, 'version':version }).count()
             elif variable.name == 'rating_std_dev':
-                 
-                 ratings = [v.value for v in Variable.objects.filter(name='student_rating').first().get_data({'quiz':quiz, 'version':version }).all()]
-                 if len(ratings) >= 1:
+                if ratings := [
+                    v.value
+                    for v in Variable.objects.filter(name='student_rating')
+                    .first()
+                    .get_data({'quiz': quiz, 'version': version})
+                    .all()
+                ]:
                     new_value = std(ratings)
-                 #new_value = new_value['value__stddev']
-            #     new_value = Variable.objects.get(name='student_rating').get_data({'quiz':quiz, 'version':version }).count()
-                #new_value = Variable.objects.filter(name='student_rating').first().get_data({'quiz':quiz, 'version':version }).all().aggregate(StdDev('value', sample=True))
             value = Value.objects.filter(variable=variable, object_id=version.pk).last()
-            
+
 
             if new_value and value:
                 value.value = new_value
                 value.save()
                 version_values.append('{:.2f}'.format(value.value))
-            elif new_value and not value:
+            elif new_value:
                 value = Value.objects.create(variable=variable, object_id=version.pk, value=new_value)
                 version_values.append('{:.2f}'.format(value.value))
-            elif value and not new_value:
+            elif value:
                 version_values.append('{:.2f}'.format(value.value))
             else:
                 version_values.append('n/a')
@@ -903,7 +903,7 @@ def get_question_results(request, **kwargs):
     except Variable.DoesNotExist:
         calculus_condition = None
 
-    
+
 
     Grade = Variable.objects.get(name='quiz_grade')
     grades = Grade.get_data(context={'quiz': quiz})
@@ -914,11 +914,7 @@ def get_question_results(request, **kwargs):
 
     results = []
     for user in users:
-        user_result = []
-        user_result.append(user)
-        user_result.append(quiz.pk)
-        user_result.append(quiz.name)
-
+        user_result = [user, quiz.pk, quiz.name]
         user_rating = user_ratings.filter(user=user).first()
         if user_rating:
 
@@ -927,7 +923,7 @@ def get_question_results(request, **kwargs):
             answer = version.mooclet.answer_set.first()
 
             answer_chosen = answer.pk
-            
+
             answer_chosen_value = answer.text
 
             version_pk = version.pk
@@ -941,19 +937,19 @@ def get_question_results(request, **kwargs):
             answer = ''
 
             answer_chosen = ''
-            
+
             answer_chosen_value = ''
 
             version_pk = ''
             version_text = ''
             user_rating_value = ''
             user_rating_time = ''
-            
+
         if calculus_condition and user_rating:
             condition = calculus_condition.get_data({'version':version}).first()
             if condition:
                 condition = condition.value
-            
+
         else:
             condition = ''
 
@@ -970,7 +966,7 @@ def get_question_results(request, **kwargs):
         user_grade = grades.filter(user=user).first()
         user_result.append(user_grade.value)
         user_result.append(user_grade.timestamp)
-        
+
         results.append(user_result)
 
 

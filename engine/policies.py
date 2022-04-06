@@ -45,16 +45,12 @@ def thompson_sampling(variables,context):
 		rating_count = student_ratings.count()
 		rating_average = student_ratings.aggregate(Avg('value'))
 		rating_average = rating_average['value__avg']
-		if rating_average is None:
-			rating_average = 0
-		else:
-		 rating_average = rating_average * 0.1
-
+		rating_average = 0 if rating_average is None else rating_average * 0.1
 		#get instructor conf and use for priors later
 		#add priors to db
 		prior_success_db, created = Variable.objects.get_or_create(name='thompson_prior_success', content_type=version_content_type)
-		prior_success_db_value = Value.objects.filter(variable=prior_success_db, object_id=version.id).last()
-		if prior_success_db_value:
+		if prior_success_db_value := Value.objects.filter(
+		    variable=prior_success_db, object_id=version.id).last():
 			#there is already a value, so update it
 			prior_success_db_value.value = prior_success
 			prior_success_db_value.save()
@@ -63,15 +59,15 @@ def thompson_sampling(variables,context):
 			prior_success_db_value = Value.objects.create(variable=prior_success_db, object_id=version.id, value=prior_success)
 
 		prior_failure_db, created = Variable.objects.get_or_create(name='thompson_prior_failure', content_type=version_content_type)
-		prior_failure_db_value = Value.objects.filter(variable=prior_failure_db, object_id=version.id).last()
-		if prior_failure_db_value:
+		if prior_failure_db_value := Value.objects.filter(
+		    variable=prior_failure_db, object_id=version.id).last():
 			#there is already a value, so update it
 			prior_failure_db_value.value = prior_failure
 			prior_failure_db_value.save()
 		else:
 			#no db value
 			prior_failure_db_value = Value.objects.create(variable=prior_failure_db, object_id=version.id, value=prior_failure)
-	
+
 
 		#TODO - log to db later?
 		successes = (rating_average * rating_count) + prior_success
@@ -114,8 +110,6 @@ def prompt_shortlong_condition(variables, context):
 	if previous_condition_value is not None:
 		mooclet_version = Version.objects.get(pk=previous_condition_value.object_id)
 
-		return mooclet_version
-
 	else:
 		value = 0
 		mooclet_version = choice(context['mooclet'].version_set.all())
@@ -129,7 +123,8 @@ def prompt_shortlong_condition(variables, context):
 			value = 34
 		condition = Value.objects.create(variable=condition_var, user=user, object_id=mooclet_version.pk, value=value)
 		condition.save()
-		return mooclet_version
+
+	return mooclet_version
 
 
 
