@@ -1,6 +1,7 @@
 [tool.bandit]
 
 [tool.isort]
+profile = "black"
 force_grid_wrap = 0
 include_trailing_comma = true
 line_length = 88
