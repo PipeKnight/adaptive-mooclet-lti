@@ -69,17 +69,26 @@ SECURE_SETTINGS = {
 
 ### Initialize project
 ```
-python manage.py migrate
-# (optional: create superuser)
-python manage.py collectstatic
-python manage.py runsslserver 0.0.0.0:8000
+python3 manage.py migrate
+python3 manage.py createsuperuser
+# enter superuser credentials
+python3 manage.py collectstatic
+python3 manage.py runsslserver 0.0.0.0:8000
 ```
 Now open a browser and enter:
-`https://localhost:8000/qlb/tool_config`
+`https://localhost:8000/lti/tool_config`
 Your browser will likely block you from viewing this page. You must override this.
 ![Chrome Security Warning](/images/chrome_error.png)
+Then you'll see something like this
+![LTI tool config window](/images/tool_config.png)
 
 Copy all the XML data; you will need this to install your tool in Canvas.
 
+Also, you can enter the admin panel and create some users, questions, quizzes, etc.
+`https://localhost:8000/admin`
+After entering your login and password you should see this:
+![Admin panel](/images/admin_page.png)
 
+Possible problems with setting up this app:
+- outdated LTI libs, can be fixed by manually changing lib source codes
 
