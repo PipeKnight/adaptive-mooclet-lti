@@ -1,5 +1,6 @@
 import numpy as np
 
+
 # Thompson sampling
 def computeExplanation_Thompson(student, allExplanations, allExplanationResults):
     # Sample from posterior distribution P(\theta | D) for each explanation

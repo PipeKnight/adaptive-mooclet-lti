@@ -1,17 +1,16 @@
-from django.shortcuts import get_object_or_404, get_list_or_404
-from django.core import serializers
-from django.http import HttpResponse, JsonResponse
 import json
-from engine.models import *
-from engine import utils
 
-from rest_framework import viewsets
-from api.serializers import *
-from ltilib.utils import grade_passback
-
+from django.core import serializers
 from django.db.models import Avg
-
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_list_or_404, get_object_or_404
+from engine import utils
+from engine.models import *
+from ltilib.utils import grade_passback
 from numpy import std
+from rest_framework import viewsets
+
+from api.serializers import *
 
 ##########################
 ##### rest-framework #####

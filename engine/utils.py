@@ -1,5 +1,7 @@
-from .models import *
 from django.contrib.contenttypes.models import ContentType
+
+from .models import *
+
 
 def get_mooclet_context(mooclet):
     # content_type for model that the mooclet is attached to

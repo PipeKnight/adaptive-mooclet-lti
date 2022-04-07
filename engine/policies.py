@@ -1,8 +1,8 @@
-from numpy.random import choice, beta
-from django.urls import reverse
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Avg
+from django.urls import reverse
+from numpy.random import beta, choice
 
 # arguments to policies:
 

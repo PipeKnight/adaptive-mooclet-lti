@@ -1,7 +1,7 @@
-from django.core.exceptions import ImproperlyConfigured
-from oauthlib.oauth1 import RequestValidator
-from oauthlib.common import to_unicode
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from oauthlib.common import to_unicode
+from oauthlib.oauth1 import RequestValidator
 
 # import redis
 # import time

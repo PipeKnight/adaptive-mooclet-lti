@@ -1,19 +1,20 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
-from django.forms import modelformset_factory, inlineformset_factory, ModelForm
-from django.http import HttpResponse
-from django.http import HttpResponse, JsonResponse
+import csv
 import json
 from urllib.parse import urlencode
-from .models import *
+
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Avg, StdDev
-from .forms import *
-from .utils import *
-from qualtrics.utils import provision_qualtrics_quiz
+from django.forms import ModelForm, inlineformset_factory, modelformset_factory
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from ltilib.utils import display_preview
 from numpy import std
-import csv
+from qualtrics.utils import provision_qualtrics_quiz
+
+from .forms import *
+from .models import *
+from .utils import *
 
 # from django.views import View
 

@@ -1,4 +1,5 @@
 from django import forms
+
 from .models import *
 
 # class SelectQualtricsForm(forms.Form):
@@ -18,7 +19,8 @@ class QuizForm(forms.ModelForm):
     """
 
     use_qualtrics = forms.BooleanField(
-        required=False, label="Keep checked as default (use Qualtrics template)"
+        required=False,
+        label="Keep checked as default (use Qualtrics template)",
     )
 
     class Meta:

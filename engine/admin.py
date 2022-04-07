@@ -1,8 +1,8 @@
 from django.contrib import admin
+from ltilib.models import LtiParameters
 
 # Register your models here.
 from .models import *
-from ltilib.models import LtiParameters
 
 
 class QuizAdmin(admin.ModelAdmin):

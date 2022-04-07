@@ -11,8 +11,10 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 from os.path import abspath, basename, dirname, join, normpath
-from django.urls import reverse_lazy
 from sys import path
+
+from django.urls import reverse_lazy
+
 from .secure import SECURE_SETTINGS
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))

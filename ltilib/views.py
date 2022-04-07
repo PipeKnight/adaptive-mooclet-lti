@@ -1,18 +1,20 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.http import require_http_methods
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-from django.conf import settings
-from ims_lti_py.tool_config import ToolConfig
-from django.http import HttpResponse, HttpResponseRedirect
-import logging
-from engine.models import Quiz
-from ltilib.models import LtiParameters
-from .utils import display_preview
 import json
+import logging
 
 # using dce_lti_py instad of ims_lti_py for grade passback
 from dce_lti_py import OutcomeRequest
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
+from engine.models import Quiz
+from ims_lti_py.tool_config import ToolConfig
+
+from ltilib.models import LtiParameters
+
+from .utils import display_preview
 
 # from ims_lti_py import OutcomeRequest
 
@@ -55,7 +57,9 @@ def tool_config(request):
     }
     # add resource selection params to the xml
     lti_tool_config.set_ext_param(
-        "canvas.instructure.com", "resource_selection", resource_selection_params
+        "canvas.instructure.com",
+        "resource_selection",
+        resource_selection_params,
     )
 
     lti_tool_config.set_ext_param("canvas.instructure.com", "privacy_level", "public")

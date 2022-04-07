@@ -10,13 +10,14 @@ Note: Chrome, Safari, and IE ignore Allow-From, though they should still
 load the iframe.
 """
 import time
-from django.conf import settings
-from urlparse import urlparse
 
 # from hx_lti_initializer.utils import debug_printer
 from importlib import import_module
+
+from django.conf import settings
 from django.utils.cache import patch_vary_headers
 from django.utils.http import cookie_date
+from urlparse import urlparse
 
 
 class XFrameOptionsMiddleware(object):
@@ -111,7 +112,8 @@ class SessionMiddleware(object):
             # The session should be deleted only if the session is entirely empty
             if self.get_cookie_name(request) in request.COOKIES and empty:
                 response.delete_cookie(
-                    self.get_cookie_name(request), domain=settings.SESSION_COOKIE_DOMAIN
+                    self.get_cookie_name(request),
+                    domain=settings.SESSION_COOKIE_DOMAIN,
                 )
             else:
                 if accessed:
@@ -162,7 +164,8 @@ class CookielessSessionMiddleware(object):
                 request.META.get(
                     "HTTP_X_FORWARDED_FOR",
                     request.META.get(
-                        "HTTP_X_REAL_IP", request.META.get("REMOTE_ADDR", "1.2.3.4")
+                        "HTTP_X_REAL_IP",
+                        request.META.get("REMOTE_ADDR", "1.2.3.4"),
                     ),
                 )
                 != request.session["logged_ip"]
