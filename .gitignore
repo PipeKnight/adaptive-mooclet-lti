@@ -29,3 +29,4 @@ secure.config
 
 .pytest_cache
 .ebextensions
+.mypy_cache
