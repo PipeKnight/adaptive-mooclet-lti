@@ -1,0 +1,46 @@
+[tool.bandit]
+
+[tool.isort]
+force_grid_wrap = 0
+include_trailing_comma = true
+line_length = 88
+multi_line_output = 1
+overwrite_in_place = true
+use_parentheses = true
+verbose = true
+
+[tool.pycodestyle]
+benchmark = true
+count = true
+exclude = "__init__.py"
+format = "pylint"
+max-line-length = 88
+max-doc-length = 88
+show-pep8 = true
+show-source = true
+statistics = true
+
+[tool.pylint]
+
+[tool.pytest.ini_options]
+console_output_style = "count"
+log_auto_indent = true
+log_cli = true
+log_level = "DEBUG"
+testpaths = "tests"
+
+
+[tool.black]
+line-length = 88
+target-version = ["py36", "py37", "py38"]
+include = "\.pyi?$"
+exclude = '''
+/(
+  \.toml
+  |\.sh
+  |\.git
+  |\.ini
+  |Dockerfile
+  |Jenkinfile
+)/
+'''
