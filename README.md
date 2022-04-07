@@ -79,6 +79,7 @@ Now open a browser and enter:
 `https://localhost:8000/lti/tool_config`
 Your browser will likely block you from viewing this page. You must override this.
 ![Chrome Security Warning](/images/chrome_error.png)
+
 Then you'll see something like this
 ![LTI tool config window](/images/tool_config.png)
 
