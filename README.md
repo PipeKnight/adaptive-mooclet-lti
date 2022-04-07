@@ -78,9 +78,11 @@ python3 manage.py runsslserver 0.0.0.0:8000
 Now open a browser and enter:
 `https://localhost:8000/lti/tool_config`
 Your browser will likely block you from viewing this page. You must override this.
+
 ![Chrome Security Warning](/images/chrome_error.png)
 
 Then you'll see something like this
+
 ![LTI tool config window](/images/tool_config.png)
 
 Copy all the XML data; you will need this to install your tool in Canvas.
