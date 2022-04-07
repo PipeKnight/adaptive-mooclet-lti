@@ -71,7 +71,7 @@ INSTALLED_APPS = (
 MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    #'django.middleware.csrf.CsrfViewMiddleware',
+    # django.middleware.csrf.CsrfViewMiddleware',
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     # 'cached_auth.Middleware',
     "django_auth_lti.middleware.LTIAuthMiddleware",
@@ -79,9 +79,9 @@ MIDDLEWARE = (
     # 'django_auth_lti.middleware_patched.MultiLTILaunchAuthMiddleware',
     # "django.contrib.auth.middleware.SessionAuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    #'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #'adaptive_mooclet_lti.middleware.XFrameOptionsMiddleware',
-    #'adaptive_mooclet_lti.middleware.CookielessSessionMiddleware',
+    # django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # adaptive_mooclet_lti.middleware.XFrameOptionsMiddleware',
+    # adaptive_mooclet_lti.middleware.CookielessSessionMiddleware',
 )
 AUTHENTICATION_BACKENDS = (
     "django_auth_lti.backends.LTIAuthBackend",

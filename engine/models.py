@@ -9,8 +9,7 @@ from django.shortcuts import redirect
 # from qualtrics.models import Template
 from django.urls import reverse
 
-from . import policies
-from . import policy_probabilities
+from . import policies, policy_probabilities
 
 ####################################
 #### Generalized mooclet models ####
