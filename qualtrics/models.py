@@ -8,5 +8,5 @@ class Template(models.Model):
     # if this is not blank, signifies that we have a local QSF file
     filename = models.CharField(max_length=200, default="")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name

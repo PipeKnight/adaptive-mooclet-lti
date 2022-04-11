@@ -32,13 +32,15 @@ class MoocletType(models.Model):
         on_delete=models.DO_NOTHING,
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.display_name
 
 
 class Mooclet(models.Model):
     name = models.CharField(max_length=100, default="")
-    type = models.ForeignKey(MoocletType, null=True, on_delete=models.DO_NOTHING)
+    type = models.ForeignKey(
+        MoocletType, blank=True, null=True, on_delete=models.DO_NOTHING
+    )
     policy = models.ForeignKey(
         "Policy", blank=True, null=True, on_delete=models.DO_NOTHING
     )
@@ -47,7 +49,7 @@ class Mooclet(models.Model):
         ("next_question", "next_question"),
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return "Mooclet: {}".format(self.id)
 
     def get_version_ids(self):
@@ -79,9 +81,9 @@ class Version(models.Model):
     class Meta:
         order_with_respect_to = "mooclet"
 
-    def __unicode__(self):
+    def __str__(self):
         try:
-            return getattr(self, "explanation").__unicode__()
+            return getattr(self, "explanation").__str__()
         except:
             return "Version: {}".format(self.pk)
 
@@ -94,7 +96,7 @@ class Policy(models.Model):
     class Meta:
         verbose_name_plural = "policies"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_policy_function(self):
@@ -169,12 +171,12 @@ class Variable(models.Model):
     # policy_relevance = [vpal_researcher, harvard_researcher, course_team, external_researcher]
     # policy_relevance2 = [student_judgements, instructor_judgements]
 
-    def __unicode__(self):
+    def __str__(self):
         return self.display_name or self.name
 
     @property
     def object_name(self):
-        return self.content_type.__unicode__()
+        return self.content_type.__str__()
 
     def get_data(self, context=None):
         """
@@ -229,14 +231,14 @@ class Value(models.Model):
     value = models.FloatField()
     timestamp = models.DateTimeField(null=True, auto_now=True)
 
-    def __unicode__(self):
-        var_name = self.variable.name if self.variable.name else ""
-        value = self.value if self.value else ""
+    def __str__(self):
+        var_name = self.variable.name or ""
+        value = self.value or ""
         var_content_type = (
             self.variable.content_type.name if self.variable.content_type else ""
         )
-        value_object_id = self.object_id if self.object_id else ""
-        return "{}={}, {}={}".format(var_name, value, var_content_type, value_object_id)
+        value_object_id = self.object_id or ""
+        return f"{var_name}={value}, {var_content_type}={value_object_id}"
 
     def get_object_content(self, content_object_name):
         """
@@ -244,13 +246,13 @@ class Value(models.Model):
         takes as input the name of the content object
         """
         ct = self.variable.content_type
-        if ct.__unicode__() != content_object_name:
+        if ct.__str__() != content_object_name:
             return None
         return ct.get_object_for_this_type(pk=self.object_id)
 
     @property
     def object_name(self):
-        return self.variable.content_type.__unicode__()
+        return self.variable.content_type.__str__()
 
     # enables use of "value.course", etc. syntax
     @property
@@ -280,7 +282,7 @@ class Course(models.Model):
     instance = models.CharField(max_length=200, default="")
     name = models.CharField(max_length=200, default="")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -301,7 +303,7 @@ class Quiz(models.Model):
     class Meta:
         verbose_name_plural = "quizzes"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def isValid(self):
@@ -346,7 +348,7 @@ class Question(Version):
     # template = models.ForeignKey(Template)
     url = models.URLField(default="", blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.text
 
 
@@ -361,14 +363,14 @@ class Answer(models.Model):
     class Meta:
         order_with_respect_to = "question"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.text
 
 
 class Explanation(Version):
     text = models.TextField("explanation text")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.text
 
 
@@ -383,8 +385,8 @@ class Collaborator(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     course = models.ForeignKey(Course, on_delete=models.DO_NOTHING)
 
-    def __unicode__(self):
-        return self.user.__unicode__()
+    def __str__(self):
+        return self.user.__str__()
 
     class Meta:
         unique_together = (
